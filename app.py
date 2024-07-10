@@ -4,6 +4,9 @@ import plotly.express as px
 import pyarrow as pa
 import pyarrow.parquet as pq
 
+st.set_page_config(
+    layout="wide",
+)
 
 st.title("Рейтинг спортсменів стрільців з практичної стрільби з карабіну")
 
