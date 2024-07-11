@@ -58,3 +58,36 @@ st.write(fig2)
 
 st.write("* для розрахунку рейтингу використовуються данні з останніх 6 матчів національного рівня (Чемпіонат України, Кубок України). Якщо спортсмен пропустив матч, то за такий матч спортсмен отримує свій найгірший результат помножений на 0.75. Далі результати за останні 6 матчів перемножуються на наступні коєфіцієнти: 1.0, 0.9, 0.8, 0.7, 0.6, 0.5, тачим чином, що б матчі, які видбулись останніми, мали вищу вагу. Сума результатів і є рейтингом спортсмена. Максимальний теоретично можливий тейтинг складає 450 балів (потрібно виграти 6 останніх матчів).")
 st.write("** для розрахунку класса використовуються відсотки набрані спортсменом у останніх 6 матчах. З них беруться два найкращіх результата і обраховуєтся цередне значення цих двох найкращіх. Далі, відповідно до результатів вихначаються відповідні класи: Grand Master - 95-100%, Master - 85-94.9%, A - 75-84.9%, B - 60-74.9%, C - 40-59.9%, D - 2-39.9%")
+
+
+
+
+st.title("SAS")
+extended_path_SAS = "https://storage.googleapis.com/alphastats_ratings/extended_rating_1_SAS.parquet"
+schema_SAS = pa.schema([("rank_num", "int32"),
+	("shooters_name", "string"), 
+	("rating", pa.float32()),
+	("class", "string"),
+	("class_avg", pa.float32()),
+	("matches", "int32"),
+	("percents", pa.list_(pa.float32())), 
+	("places", pa.list_(pa.float32()))])
+df_extended_SAS = pd.read_parquet(extended_path_SAS, schema=schema).sort_values(by=['rank_num']).round(2).set_index(df.columns[0]).rename(columns={'rank_num': 'Номер у рейтингу', 'shooters_name': 'Ім\'я спортсмена', 'rating': 'Рейтинг', 'class': 'Клас спортсмена','class_avg':'Середній результат','matches':'Кількість матчів'})
+
+st.data_editor(
+    df_extended_SAS,
+    column_config={
+        "percents": st.column_config.BarChartColumn(
+            "Останні 6 змаганнь",
+            help="The sales volume in the last 6 months",
+            y_min=0,
+            y_max=1,
+        ),
+        "places": st.column_config.ListColumn(
+            "Зайняті місця",
+            width="medium",
+        )
+        #"places": "Зайняті місця"
+    },
+    hide_index=False
+)
