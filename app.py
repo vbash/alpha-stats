@@ -125,3 +125,73 @@ st.data_editor(
     },
     hide_index=False
 )
+
+
+st.title("Senior")
+extended_path_Senior = "https://storage.googleapis.com/alphastats_ratings/extended_rating_1_senior.parquet"
+schema_Senior= pa.schema([("rank_num", "int32"),
+	("shooters_name", "string"), 
+	("rating", pa.float32()),
+	("class", "string"),
+	("class_avg", pa.float32()),
+	("matches", "int32"),
+	("percents", pa.list_(pa.float32())), 
+	("places", pa.list_(pa.float32()))])
+df_extended_Senior = pd.read_parquet(extended_path_Senior, schema=schema).sort_values(by=['rank_num']).round(2).set_index(df.columns[0]).rename(columns={'rank_num': 'Номер у рейтингу', 'shooters_name': 'Ім\'я спортсмена', 'rating': 'Рейтинг', 'class': 'Клас спортсмена','class_avg':'Середній результат','matches':'Кількість матчів'})
+
+st.data_editor(
+    df_extended_Senior,
+    column_config={
+        "percents": st.column_config.BarChartColumn(
+            "Останні 6 змаганнь",
+            help="The sales volume in the last 6 months",
+            y_min=0,
+            y_max=1,
+        ),
+        "places": st.column_config.ListColumn(
+            "Зайняті місця",
+            width="medium",
+        ),
+        "Клас спортсмена": st.column_config.Column(
+        	"Клас спортсмена",
+            disabled=True
+        )
+    },
+    hide_index=False
+)
+
+
+
+st.title("Junior")
+extended_path_Junior = "https://storage.googleapis.com/alphastats_ratings/extended_rating_1_junior.parquet"
+schema_Junior = pa.schema([("rank_num", "int32"),
+	("shooters_name", "string"), 
+	("rating", pa.float32()),
+	("class", "string"),
+	("class_avg", pa.float32()),
+	("matches", "int32"),
+	("percents", pa.list_(pa.float32())), 
+	("places", pa.list_(pa.float32()))])
+df_extended_Junior = pd.read_parquet(extended_path_Junior, schema=schema).sort_values(by=['rank_num']).round(2).set_index(df.columns[0]).rename(columns={'rank_num': 'Номер у рейтингу', 'shooters_name': 'Ім\'я спортсмена', 'rating': 'Рейтинг', 'class': 'Клас спортсмена','class_avg':'Середній результат','matches':'Кількість матчів'})
+
+st.data_editor(
+    df_extended_Junior,
+    column_config={
+        "percents": st.column_config.BarChartColumn(
+            "Останні 6 змаганнь",
+            help="The sales volume in the last 6 months",
+            y_min=0,
+            y_max=1,
+        ),
+        "places": st.column_config.ListColumn(
+            "Зайняті місця",
+            width="medium",
+        ),
+        "Клас спортсмена": st.column_config.Column(
+        	"Клас спортсмена",
+            disabled=True
+        )
+    },
+    hide_index=False
+)
+
