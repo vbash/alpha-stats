@@ -77,3 +77,6 @@ print_rating_table(extended_path_Senior)
 
 st.title("Junior")
 print_rating_table(extended_path_Junior)
+
+st.write("*** всі наведені рейтинги не є офіційними рейтингами федерації і розраховані автором цієї сторінки у мотиваційно-розважальних цілях.")
+st.write("Контактна інформація: Telegram: @vitaliy_bashun")
