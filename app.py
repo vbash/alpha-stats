@@ -4,9 +4,7 @@ import plotly.express as px
 import pyarrow as pa
 import pyarrow.parquet as pq
 
-st.set_page_config(
-    layout="wide",
-)
+st.set_page_config(page_title="Alpha Stats", layout="wide")
 
 def print_rating_table(rating_file_path):
 	df_schema = pa.schema([("rank_num", "int32"),
