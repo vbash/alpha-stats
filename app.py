@@ -45,6 +45,7 @@ extended_path_SAS = "https://storage.googleapis.com/alphastats_ratings/extended_
 extended_path_Lady = "https://storage.googleapis.com/alphastats_ratings/extended_rating_1_lady.parquet"
 extended_path_Senior = "https://storage.googleapis.com/alphastats_ratings/extended_rating_1_senior.parquet"
 extended_path_Junior = "https://storage.googleapis.com/alphastats_ratings/extended_rating_1_junior.parquet"
+file_path_matches = "https://storage.googleapis.com/alphastats_ratings/last6matches.csv"
 
 st.title("Рейтинг спортсменів-стрільців. Практична стрільба. Карабін.")
 st.write("Останне оновлення рейтингу 2024.07.07")
