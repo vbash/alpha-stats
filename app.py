@@ -8,7 +8,8 @@ st.set_page_config(
     layout="wide",
 )
 
-st.title("Рейтинг спортсменів стрільців з практичної стрільби з карабіну")
+
+st.title("Рейтинг спортсменів-стрільців. Практична стрільба. Карабін.")
 
 file_path = "https://storage.googleapis.com/alphastats_ratings/rating_carabin_1_20240707.csv"
 df = pd.read_csv(file_path,
@@ -39,13 +40,17 @@ st.data_editor(
     column_config={
         "percents": st.column_config.BarChartColumn(
             "Останні 6 змаганнь",
-            help="The sales volume in the last 6 months",
+            help="Відсотки від 1го місця",
             y_min=0,
             y_max=1,
         ),
-        "places": "Зайняті місця"
+        "places": st.column_config.ListColumn(
+            "Зайняті місця",
+            width="medium",
+        )
+        #"places": "Зайняті місця"
     },
-    hide_index=False,
+    hide_index=False
 )
 
 
@@ -79,18 +84,23 @@ st.data_editor(
     column_config={
         "percents": st.column_config.BarChartColumn(
             "Останні 6 змаганнь",
-            help="The sales volume in the last 6 months",
+            help="Відсотки від 1го місця",
             y_min=0,
             y_max=1,
         ),
         "places": st.column_config.ListColumn(
             "Зайняті місця",
             width="medium",
+        ),
+        "Клас спортсмена": st.column_config.Column(
+        	"Клас спортсмена",
+            disabled=True
         )
-        #"places": "Зайняті місця"
     },
     hide_index=False
 )
+
+
 
 
 st.title("Lady")
@@ -110,7 +120,7 @@ st.data_editor(
     column_config={
         "percents": st.column_config.BarChartColumn(
             "Останні 6 змаганнь",
-            help="The sales volume in the last 6 months",
+            help="Відсотки від 1го місця",
             y_min=0,
             y_max=1,
         ),
@@ -144,7 +154,7 @@ st.data_editor(
     column_config={
         "percents": st.column_config.BarChartColumn(
             "Останні 6 змаганнь",
-            help="The sales volume in the last 6 months",
+            help="Відсотки від 1го місця",
             y_min=0,
             y_max=1,
         ),
@@ -179,7 +189,7 @@ st.data_editor(
     column_config={
         "percents": st.column_config.BarChartColumn(
             "Останні 6 змаганнь",
-            help="The sales volume in the last 6 months",
+            help="Відсотки від 1го місця",
             y_min=0,
             y_max=1,
         ),
@@ -194,4 +204,3 @@ st.data_editor(
     },
     hide_index=False
 )
-
