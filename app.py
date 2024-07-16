@@ -78,5 +78,23 @@ print_rating_table(extended_path_Senior)
 st.title("Junior")
 print_rating_table(extended_path_Junior)
 
+st.title("Матчі враховані у рейтинг")
+df_matches = pd.read_csv(file_path_matches,sep=",")
+st.data_editor(
+	df_matches,
+	column_config={
+		"num":"Номер",
+		"name":"Назва",
+		"match_date":"Дата",
+		"results_link": st.column_config.LinkColumn(
+            "Посилання на результати",
+            help="Посилання на Practiscore результати",
+            display_text="Перейти до результатів"
+        )
+	},
+	hide_index=True,
+	key = "matches"
+)
+
 st.write("*** всі наведені рейтинги не є офіційними рейтингами федерації і розраховані автором цієї сторінки у мотиваційно-розважальних цілях.")
 st.write("Контактна інформація: Telegram: @vitaliy_bashun")
