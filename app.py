@@ -41,7 +41,7 @@ def print_rating_table(rating_file_path):
 extended_path = "https://storage.googleapis.com/alphastats_ratings/extended_rating_1_v2.parquet"
 extended_path_SAS = "https://storage.googleapis.com/alphastats_ratings/extended_rating_1_SAS_v2.parquet"
 extended_path_Lady = "https://storage.googleapis.com/alphastats_ratings/extended_rating_1_lady_v2.parquet"
-extended_path_Senior = "https://storage.googleapis.com/alphastats_ratings/extended_rating_1_senior_v2.parquet"
+extended_path_Senior = "https://storage.googleapis.com/alphastats_ratings/extended_rating_1_senior_v3.parquet"
 extended_path_Junior = "https://storage.googleapis.com/alphastats_ratings/extended_rating_1_junior_v2.parquet"
 file_path_matches = "https://storage.googleapis.com/alphastats_ratings/last6matches.csv"
 
