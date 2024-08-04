@@ -62,16 +62,16 @@ def print_rating_table(rating_file_path):
 		res_df = pd.concat([res_df0,res_df1,res_df2,res_df3,res_df4,res_df5])
 		st.line_chart(res_df, x='match_date', y=['percent0'], color='shooters_name')
 
-extended_path = "https://storage.googleapis.com/alphastats_ratings/extended_rating_1_v2.parquet"
-extended_path_SAS = "https://storage.googleapis.com/alphastats_ratings/extended_rating_1_SAS_v3.parquet"
-extended_path_SAO = "https://storage.googleapis.com/alphastats_ratings/extended_rating_1_SAO.parquet"
-extended_path_Lady = "https://storage.googleapis.com/alphastats_ratings/extended_rating_1_lady_v3.parquet"
-extended_path_Senior = "https://storage.googleapis.com/alphastats_ratings/extended_rating_1_senior_v4.parquet"
-extended_path_Junior = "https://storage.googleapis.com/alphastats_ratings/extended_rating_1_junior_v2.parquet"
-file_path_matches = "https://storage.googleapis.com/alphastats_ratings/last6matches.csv"
+extended_path = "https://storage.googleapis.com/alphastats_ratings/2/extended_rating.parquet"
+extended_path_SAS = "https://storage.googleapis.com/alphastats_ratings/2/extended_rating_SAS.parquet"
+extended_path_SAO = "https://storage.googleapis.com/alphastats_ratings/2/extended_rating_SAO.parquet"
+extended_path_Lady = "https://storage.googleapis.com/alphastats_ratings/2/extended_rating_lady.parquet"
+extended_path_Senior = "https://storage.googleapis.com/alphastats_ratings/2/extended_rating_senior.parquet"
+extended_path_Junior = "https://storage.googleapis.com/alphastats_ratings/2/extended_rating_junior.parquet"
+file_path_matches = "https://storage.googleapis.com/alphastats_ratings/2/last6m.csv"
 
 st.title("Рейтинг спортсменів-стрільців. Практична стрільба. Карабін.")
-st.write("Останне оновлення рейтингу 2024.07.07")
+st.write("Останне оновлення рейтингу 2024.08.04")
 st.write("Таблиця рейтингів* та классів**")
 print_rating_table(extended_path)
 
@@ -118,5 +118,6 @@ st.data_editor(
 	key = "matches"
 )
 
-st.write("*** всі наведені рейтинги не є офіційними рейтингами федерації і розраховані автором цієї сторінки у мотиваційно-розважальних цілях.")
+st.write("*** підчас Кубку України 3 етап 2024, понижуючий коефіцієнт 0.75 не застосовувався для деяких спортсменів вимушено пропустивших змагання через участь у Чемпіонаті Світу 2024. Серед них Васін Віталій, Швед Олександр та Писарев Олексій.")
+st.write("**** всі наведені рейтинги не є офіційними рейтингами федерації і розраховані автором цієї сторінки у мотиваційно-розважальних цілях.")
 st.write("Контактна інформація: Telegram: @vitaliy_bashun")
