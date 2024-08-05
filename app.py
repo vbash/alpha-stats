@@ -7,6 +7,7 @@ import pyarrow.parquet as pq
 st.set_page_config(page_title="Alpha Stats", layout="wide")
 
 df_schema = pa.schema([("rank_num", "int32"),
+	("progress", "string"), 
 	("shooters_name", "string"), 
 	("rating", pa.float32()),
 	("class", "string"),
@@ -30,7 +31,9 @@ def print_rating_table(rating_file_path):
 	        "Зайняті місця",
 	        width="medium",
 	    ),
-	    'shooters_name': 'Ім\'я спортсмена'
+	    'shooters_name': 'Ім\'я спортсмена',
+	    "progress": "Прогрес",
+	    "rank_num": "Місце"
 	}
 
 	event = st.dataframe(
@@ -43,11 +46,24 @@ def print_rating_table(rating_file_path):
     	key = rating_file_path
 	)
 
+	filtered_df_column_config = {
+	    "percents": st.column_config.ListColumn(
+	        "Останні 6 змаганнь",
+            help="Відсотки від 1го місця",
+	    ),
+	    "places": st.column_config.ListColumn(
+	        "Зайняті місця",
+	        width="medium",
+	    ),
+	    'shooters_name': 'Ім\'я спортсмена',
+	    "rank_num": "Місце"
+	}
+
 	people = event.selection.rows
 	filtered_df = rating_df.iloc[people]
 
 	if filtered_df.size > 0:
-		st.dataframe(filtered_df[['shooters_name','percents','places']])
+		st.dataframe(filtered_df[['shooters_name','percents','places']],column_config=filtered_df_column_config)
 		df = pd.DataFrame(filtered_df['percents'].values.tolist(), index=filtered_df['shooters_name']).add_prefix('percent')
 		df = df.reset_index()
 		df = df.reset_index()
@@ -62,12 +78,12 @@ def print_rating_table(rating_file_path):
 		res_df = pd.concat([res_df0,res_df1,res_df2,res_df3,res_df4,res_df5])
 		st.line_chart(res_df, x='match_date', y=['percent0'], color='shooters_name')
 
-extended_path = "https://storage.googleapis.com/alphastats_ratings/2/extended_rating.parquet"
-extended_path_SAS = "https://storage.googleapis.com/alphastats_ratings/2/extended_rating_SAS.parquet"
-extended_path_SAO = "https://storage.googleapis.com/alphastats_ratings/2/extended_rating_SAO.parquet"
-extended_path_Lady = "https://storage.googleapis.com/alphastats_ratings/2/extended_rating_lady.parquet"
-extended_path_Senior = "https://storage.googleapis.com/alphastats_ratings/2/extended_rating_senior.parquet"
-extended_path_Junior = "https://storage.googleapis.com/alphastats_ratings/2/extended_rating_junior.parquet"
+extended_path = "https://storage.googleapis.com/alphastats_ratings/2/extended_rating_v4.parquet"
+extended_path_SAS = "https://storage.googleapis.com/alphastats_ratings/2/extended_rating_SAS_v2.parquet"
+extended_path_SAO = "https://storage.googleapis.com/alphastats_ratings/2/extended_rating_SAO_v2.parquet"
+extended_path_Lady = "https://storage.googleapis.com/alphastats_ratings/2/extended_rating_lady_v2.parquet"
+extended_path_Senior = "https://storage.googleapis.com/alphastats_ratings/2/extended_rating_senior_v2.parquet"
+extended_path_Junior = "https://storage.googleapis.com/alphastats_ratings/2/extended_rating_junior_v2.parquet"
 file_path_matches = "https://storage.googleapis.com/alphastats_ratings/2/last6m.csv"
 
 st.title("Рейтинг спортсменів-стрільців. Практична стрільба. Карабін.")
