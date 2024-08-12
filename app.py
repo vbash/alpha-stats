@@ -4,7 +4,7 @@ import plotly.express as px
 import pyarrow as pa
 import pyarrow.parquet as pq
 
-st.set_page_config(page_title="Alpha Stats", layout="wide")
+st.set_page_config(page_title="Alpha Stats Carbine", layout="wide")
 
 df_schema = pa.schema([("rank_num", "int32"),
 	("progress", "string"), 
@@ -25,7 +25,7 @@ def print_rating_table(rating_file_path):
 	        "Останні 6 змаганнь",
             help="Відсотки від 1го місця",
 	        y_min=0,
-	        y_max=1,
+	        y_max=100,
 	    ),
 	    "places": st.column_config.ListColumn(
 	        "Зайняті місця",
@@ -78,13 +78,16 @@ def print_rating_table(rating_file_path):
 		res_df = pd.concat([res_df0,res_df1,res_df2,res_df3,res_df4,res_df5])
 		st.line_chart(res_df, x='match_date', y=['percent0'], color='shooters_name')
 
-extended_path = "https://storage.googleapis.com/alphastats_ratings/2/extended_rating_v4.parquet"
-extended_path_SAS = "https://storage.googleapis.com/alphastats_ratings/2/extended_rating_SAS_v2.parquet"
-extended_path_SAO = "https://storage.googleapis.com/alphastats_ratings/2/extended_rating_SAO_v2.parquet"
-extended_path_Lady = "https://storage.googleapis.com/alphastats_ratings/2/extended_rating_lady_v2.parquet"
-extended_path_Senior = "https://storage.googleapis.com/alphastats_ratings/2/extended_rating_senior_v2.parquet"
-extended_path_Junior = "https://storage.googleapis.com/alphastats_ratings/2/extended_rating_junior_v2.parquet"
-file_path_matches = "https://storage.googleapis.com/alphastats_ratings/2/last6m.csv"
+extended_path = "https://storage.googleapis.com/ipsc-rating-dev/2/General.parquet"
+extended_path_SAS = "https://storage.googleapis.com/ipsc-rating-dev/2/SAS.parquet"
+extended_path_SAO = "https://storage.googleapis.com/ipsc-rating-dev/2/SAO.parquet"
+extended_path_Lady = "https://storage.googleapis.com/ipsc-rating-dev/2/Lady.parquet"
+extended_path_Senior = "https://storage.googleapis.com/ipsc-rating-dev/2/Senior.parquet"
+extended_path_Junior = "https://storage.googleapis.com/ipsc-rating-dev/2/Junior.parquet"
+file_path_matches = "https://storage.googleapis.com/ipsc-rating-dev/2/matches.csv"
+file_path_club_rating = "https://storage.googleapis.com/ipsc-rating-dev/2/club_rating.csv"
+file_path_club_lists = "https://storage.googleapis.com/ipsc-rating-dev/2/club_lists.csv"
+
 
 st.title("Рейтинг спортсменів-стрільців. Практична стрільба. Карабін.")
 st.write("Останне оновлення рейтингу 2024.08.04")
@@ -135,5 +138,54 @@ st.data_editor(
 )
 
 st.write("*** підчас Кубку України 3 етап 2024, понижуючий коефіцієнт 0.75 не застосовувався для деяких спортсменів вимушено пропустивших змагання через участь у Чемпіонаті Світу 2024. Серед них Васін Віталій, Швед Олександр та Писарев Олексій.")
-st.write("**** всі наведені рейтинги не є офіційними рейтингами федерації і розраховані автором цієї сторінки у мотиваційно-розважальних цілях.")
+
+
+st.title("Рейтинг клубів")
+df_club_rating = pd.read_csv(file_path_club_rating,sep=",")
+df_club_rating['row_number'] = range(1, len(df_club_rating) + 1)
+
+clubs_column_config={
+		"row_number":"Місце",
+		"club":"Клуб",
+		"rating_sum":st.column_config.ProgressColumn(label="Рейтинг", format="%.2f", min_value=0, max_value=3000),
+		"shooters_counted":"Кількість врахованих спортсменів",
+	}
+
+club_selection_event = st.dataframe(
+	df_club_rating,
+    column_config=clubs_column_config,
+    use_container_width=False,
+    hide_index=True,
+    on_select="rerun",
+    selection_mode="single-row",
+    key = "clubs_rating",
+	column_order=("row_number", "club", "rating_sum", "shooters_counted")
+)
+
+
+df_club_lists = pd.read_csv(file_path_club_lists,sep=",")
+
+if len(club_selection_event.selection.rows) > 0:
+	club = df_club_rating.loc[club_selection_event.selection.rows[0], 'club']
+	df_list = df_club_lists.loc[df_club_lists['club'] == club]
+
+	list_column_config={
+		"club_rank":"Місце у клубі",
+		"rank_num":"Місце у загальному рейтингу",
+		"club":"Клуб",
+		"shooters_name":"Спортсмен",
+		"rating":"Рейтинг",
+	}
+
+	st.title(club)
+	st.dataframe(
+		df_list,
+		column_config=list_column_config,
+		hide_index=True,
+	)
+
+
+st.write("**** Рейтинг клубу розрахований як сумма райтингів 10 найсильніших спортсменів клубу")
+
+st.write("***** всі наведені рейтинги не є офіційними рейтингами федерації і розраховані автором цієї сторінки у мотиваційно-розважальних цілях.")
 st.write("Контактна інформація: Telegram: @vitaliy_bashun")
