@@ -28,7 +28,7 @@ def print_rating_table(rating_file_path):
         "percents": st.column_config.BarChartColumn(
             "Останні 6 змаганнь",
             help="Відсотки від 1го місця",
-            y_min=1,
+            y_min=0,
             y_max=100,
         ),
         "places": st.column_config.ListColumn(
