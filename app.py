@@ -20,7 +20,7 @@ def print_rating_table(rating_file_path):
     rating_df = pd.read_parquet(rating_file_path, schema=df_schema)
     rating_df = rating_df.sort_values(by=['rank_num']).round(2).set_index(rating_df.columns[0]).rename(
         columns={'rank_num': 'Номер у рейтингу', 'rating': 'Рейтинг', 'class': 'Клас спортсмена',
-                 'class_avg': 'Середній результат', 'matches': 'Кількість матчів'})
+                 'class_avg': 'Середній результат з 2х кращіх', 'matches': 'Кількість матчів'})
 
     rating_df['percents'] = rating_df['percents'].apply(lambda x: [round(i, 1) for i in x])
 
