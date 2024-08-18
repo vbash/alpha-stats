@@ -81,7 +81,7 @@ def print_rating_table(rating_file_path, category):
                 "rating": "Рейтинг",
                 "class": "Клас"
             }
-            st.title(shooters_name + " - істория рейтингу")
+            st.title(shooters_name + " - історія рейтингу")
             st.dataframe(
                 filtered_df_shooters_history_c,
                 hide_index=True,
