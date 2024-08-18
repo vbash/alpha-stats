@@ -16,7 +16,7 @@ df_schema = pa.schema([("rank_num", "int32"),
                        ("places", pa.list_(pa.int32()))])
 
 
-def print_rating_table(rating_file_path):
+def print_rating_table(rating_file_path, category):
     rating_df = pd.read_parquet(rating_file_path, schema=df_schema)
     rating_df = rating_df.sort_values(by=['rank_num']).round(2).set_index(rating_df.columns[0]).rename(
         columns={'rank_num': 'Номер у рейтингу', 'rating': 'Рейтинг', 'class': 'Клас спортсмена',
@@ -66,7 +66,51 @@ def print_rating_table(rating_file_path):
     people = event.selection.rows
     filtered_df = rating_df.iloc[people]
 
-    if filtered_df.size > 0:
+    if len(event.selection.rows) > 0:
+        df_shooters_history = pd.read_csv(file_path_shooter_rating_history, sep=",")
+        filtered_df_shooters_history = df_shooters_history.loc[df_shooters_history['shooters_name'].isin(filtered_df['shooters_name'])]
+        filtered_df_shooters_history_c = filtered_df_shooters_history.loc[
+            filtered_df_shooters_history['rating_category'] == category]
+        if len(event.selection.rows) == 1:
+            # show shooters "analytical card"
+            shooters_name = filtered_df.iloc[0]['shooters_name']
+            column_config_rating_history = {
+                "rating_date": "Дата",
+                "rank_num": "Номер у рейтингу",
+                "progress": "Прогрес",
+                "rating": "Рейтинг",
+                "class": "Клас"
+            }
+            st.title(shooters_name + " - істория рейтингу")
+            st.dataframe(
+                filtered_df_shooters_history_c,
+                hide_index=True,
+                column_config=column_config_rating_history,
+                column_order=('rating_date', 'rank_num', 'progress', 'rating', 'class')
+            )
+
+        fig1 = px.line(
+            filtered_df_shooters_history_c,
+            x='rating_date',
+            y=['rating'],
+            color='shooters_name'
+        )
+        fig1.update_layout(yaxis_title="Рейтинг")  # Adjust the label
+        fig1.update_layout(xaxis_title="Дата складання рейтингу")
+        st.plotly_chart(fig1)
+
+        fig2 = px.line(
+            filtered_df_shooters_history_c,
+            x='rating_date',
+            y=['rank_num'],
+            color='shooters_name'
+        )
+        fig2.update_yaxes(autorange="reversed")  # Invert the y-axis
+        fig2.update_layout(yaxis_title="Місце у рейтингу")  # Adjust the label
+        fig2.update_layout(xaxis_title="Дата складання рейтингу")
+        st.plotly_chart(fig2)
+
+        st.title("Останні 6 змаганнь")
         st.dataframe(filtered_df[['shooters_name', 'percents', 'places']], column_config=filtered_df_column_config)
         df_prc = pd.DataFrame(filtered_df['percents'].values.tolist(), index=filtered_df['shooters_name']).add_prefix(
             'percent')
@@ -86,29 +130,45 @@ def print_rating_table(rating_file_path):
         res_df5 = df_matches_prc.iloc[[5]].join(
             df_prc[['shooters_name', 'percent5']].rename(columns={'percent5': 'percent0'}), how='cross')
         res_df = pd.concat([res_df0, res_df1, res_df2, res_df3, res_df4, res_df5])
-        st.line_chart(res_df, x='match_date', y=['percent0'], color='shooters_name')
+
+        fig3 = px.bar(
+            res_df,
+            x='match_date',
+            y=['percent0'],
+            color='shooters_name',
+            barmode='group'
+        )
+        fig3.update_layout(yaxis_title="Відсотки від найкращого результату")  # Adjust the label
+        fig3.update_layout(xaxis_title="Дата змаганнь")
+        st.plotly_chart(fig3)
 
 
-extended_path = "https://storage.googleapis.com/ipsc-rating-dev/2/General.parquet"
-extended_path_SAS = "https://storage.googleapis.com/ipsc-rating-dev/2/SAS.parquet"
-extended_path_SAO = "https://storage.googleapis.com/ipsc-rating-dev/2/SAO.parquet"
-extended_path_Lady = "https://storage.googleapis.com/ipsc-rating-dev/2/Lady.parquet"
-extended_path_Senior = "https://storage.googleapis.com/ipsc-rating-dev/2/Senior.parquet"
-extended_path_Junior = "https://storage.googleapis.com/ipsc-rating-dev/2/Junior.parquet"
-file_path_matches = "https://storage.googleapis.com/ipsc-rating-dev/2/matches.csv"
-file_path_club_rating = "https://storage.googleapis.com/ipsc-rating-dev/2/club_rating.csv"
-file_path_club_lists = "https://storage.googleapis.com/ipsc-rating-dev/2/club_lists.csv"
+rating_release = 5
+rating_bucket = "ipsc-rating"
+
+extended_path = f"https://storage.googleapis.com/{rating_bucket}/{rating_release}/General.parquet"
+extended_path_SAS = f"https://storage.googleapis.com/{rating_bucket}/{rating_release}/SAS.parquet"
+extended_path_SAO = f"https://storage.googleapis.com/{rating_bucket}/{rating_release}/SAO.parquet"
+extended_path_Lady = f"https://storage.googleapis.com/{rating_bucket}/{rating_release}/Lady.parquet"
+extended_path_Senior = f"https://storage.googleapis.com/{rating_bucket}/{rating_release}/Senior.parquet"
+extended_path_Junior = f"https://storage.googleapis.com/{rating_bucket}/{rating_release}/Junior.parquet"
+file_path_matches = f"https://storage.googleapis.com/{rating_bucket}/{rating_release}/matches.csv"
+file_path_club_rating = f"https://storage.googleapis.com/{rating_bucket}/{rating_release}/club_rating.csv"
+file_path_club_rating_history = f"https://storage.googleapis.com/{rating_bucket}/{rating_release}/club_rating_history.csv"
+file_path_club_lists = f"https://storage.googleapis.com/{rating_bucket}/{rating_release}/club_lists.csv"
+file_path_shooter_rating_history = f"https://storage.googleapis.com/{rating_bucket}/{rating_release}/shooters_rating_history.csv"
+
 
 st.title("Рейтинг спортсменів-стрільців. Практична стрільба. Карабін.")
 st.write("Останне оновлення рейтингу 2024.08.04")
 st.write("Таблиця рейтингів* та классів**")
-print_rating_table(extended_path)
+print_rating_table(extended_path, 'General')
 
 df = pd.read_parquet(extended_path, schema=df_schema).sort_values(by=['class_avg'])
-fig = px.histogram(df, x="rating")
-fig2 = px.histogram(df, x="class")
-st.write(fig)
-st.write(fig2)
+fig_h1 = px.histogram(df, x="rating")
+fig_h2 = px.histogram(df, x="class")
+st.write(fig_h1)
+st.write(fig_h2)
 
 st.write(
     "* для розрахунку рейтингу використовуються данні з останніх 6 матчів національного рівня (Чемпіонат України, "
@@ -123,19 +183,19 @@ st.write(
     "C - 40-59.9%, D - 2-39.9%")
 
 st.title("SAO")
-print_rating_table(extended_path_SAO)
+print_rating_table(extended_path_SAO, 'SAO')
 
 st.title("SAS")
-print_rating_table(extended_path_SAS)
+print_rating_table(extended_path_SAS, 'SAS')
 
 st.title("Lady")
-print_rating_table(extended_path_Lady)
+print_rating_table(extended_path_Lady, 'Lady')
 
 st.title("Senior")
-print_rating_table(extended_path_Senior)
+print_rating_table(extended_path_Senior, 'Senior')
 
 st.title("Junior")
-print_rating_table(extended_path_Junior)
+print_rating_table(extended_path_Junior, 'Junior')
 
 st.title("Матчі враховані у рейтинг")
 df_matches = pd.read_csv(file_path_matches, sep=",")
@@ -162,10 +222,12 @@ st.write(
 
 st.title("Рейтинг клубів")
 df_club_rating = pd.read_csv(file_path_club_rating, sep=",")
-df_club_rating['row_number'] = range(1, len(df_club_rating) + 1)
+df_club_rating = df_club_rating.sort_values(by=['rank']).reset_index()
+
 
 clubs_column_config = {
-    "row_number": "Місце",
+    "rank": "Місце",
+    "progress": "Прогрес",
     "club": "Клуб",
     "rating_sum": st.column_config.ProgressColumn(label="Рейтинг", format="%.2f", min_value=0, max_value=3000),
     "shooters_counted": "Кількість врахованих спортсменів",
@@ -177,14 +239,15 @@ club_selection_event = st.dataframe(
     use_container_width=False,
     hide_index=True,
     on_select="rerun",
-    selection_mode="single-row",
-    key="clubs_rating",
-    column_order=("row_number", "club", "rating_sum", "shooters_counted")
+    selection_mode="multi-row",
+    key="club",
+    column_order=("rank", "progress", "club", "rating_sum", "shooters_counted")
 )
 
 df_club_lists = pd.read_csv(file_path_club_lists, sep=",")
+df_club_rating_history = pd.read_csv(file_path_club_rating_history, sep=",")
 
-if len(club_selection_event.selection.rows) > 0:
+if len(club_selection_event.selection.rows) == 1:
     club = df_club_rating.loc[club_selection_event.selection.rows[0], 'club']
     df_list = df_club_lists.loc[df_club_lists['club'] == club]
 
@@ -202,6 +265,22 @@ if len(club_selection_event.selection.rows) > 0:
         column_config=list_column_config,
         hide_index=True,
     )
+
+if len(club_selection_event.selection.rows) > 0:
+    clubs = club_selection_event.selection.rows
+    selected_clubs_df = df_club_rating.iloc[clubs]
+
+    filtered_history_df = df_club_rating_history.loc[df_club_rating_history['club'].isin(selected_clubs_df['club'])]
+
+    fig4 = px.line(
+        filtered_history_df,
+        x='rating_date',
+        y=['rating_sum'],
+        color='club'
+    )
+    fig4.update_layout(yaxis_title="Рейтинг")  # Adjust the label
+    fig4.update_layout(xaxis_title="Дата")
+    st.plotly_chart(fig4)
 
 st.write("**** Рейтинг клубу розрахований як сумма райтингів 10 найсильніших спортсменів клубу")
 
