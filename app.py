@@ -165,8 +165,12 @@ st.write("Таблиця рейтингів* та классів**")
 print_rating_table(extended_path, 'General')
 
 df = pd.read_parquet(extended_path, schema=df_schema).sort_values(by=['class_avg'])
-fig_h1 = px.histogram(df, x="rating")
+fig_h1 = px.histogram(df, x="rating", nbins=10)
+fig_h1.update_layout(xaxis_title="Рейтинг")
+fig_h1.update_layout(yaxis_title="Кількість спортсменів")
 fig_h2 = px.histogram(df, x="class")
+fig_h2.update_layout(xaxis_title="Клас")
+fig_h2.update_layout(yaxis_title="Кількість спортсменів")
 st.write(fig_h1)
 st.write(fig_h2)
 
