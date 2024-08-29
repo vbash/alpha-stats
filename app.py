@@ -11,6 +11,6 @@ st.title("Рейтинг спортсменів-стрільців. Практи
 url = "https://alphastatistic.com"
 
 
-st.title("Ми переїхали на нову адресу: alphastatistic.com")
+st.title("Ми переїхали на нову адресу: [alphastatistic.com](%s)" % url)
 st.write("check out this [alphastatistic.com](%s)" % url)
 st.markdown("check out this [link](%s)" % url)
